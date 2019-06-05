@@ -1,0 +1,103 @@
+Select DC.str_BARCODE AS BARCODE, DC.int_CLAIM_ID ,VSP.str_VSP_NAME AS VSPNAME,D.str_DISTRICT_NAME as VSPDistrict, C.str_CLIENT_NAME,DATEDIFF(YY,C.int_CLIENT_BIRTH_DATE,C.dt_CREATED_DATE) AS AGE,
+DC.dt_VISIT_DATE AS TreatmentDate,DC.dt_CLAIM_SUBMITTED AS SubmissionDate,
+
+
+STUFF(REPLACE((select '#!' + LTRIM(RTRIM(SV.str_SERVICES_NAME)) AS 'data()' from tbl_HB_DELIVERY_SERVICES_DETAIL DSD
+inner join [dbo].[tbl_SERVICES_MASTER] AS SV on DSD.int_SERVICES_ID=SV.int_SERVICES_ID
+where SV.int_SERVICES_ID in (10360188,10360189,10360190,10360281, 10360282, 10360283) and DSD.int_CLAIM_ID = DC.int_CLAIM_ID FOR XML PATH('')),' #!',', '), 1, 2, '') AS Delivery_Procedure,
+
+PDD.str_RESULT AS UterotonicsUsed,
+STUFF(REPLACE((select '#!' + LTRIM(RTRIM(PED.str_RESULT)) AS 'data()' from tbl_HB_DELIVERY_CHILD_DETAIL AS PED
+inner join tbl_CHILD_DETAIL_MASTER AS PEM on PED.int_CHILD_DETAIL_ID=PEM.int_CHILD_DETAIL_ID
+where  PEM.int_CHILD_DETAIL_ID=1 and PED.int_CLAIM_ID = DC.int_CLAIM_ID FOR XML PATH('')),' #!',', '), 1, 2, '') AS DeliveryDate,
+STUFF(REPLACE((select '#!' + LTRIM(RTRIM(PED.str_RESULT)) AS 'data()' from tbl_HB_DELIVERY_CHILD_DETAIL AS PED
+inner join tbl_CHILD_DETAIL_MASTER AS PEM on PED.int_CHILD_DETAIL_ID=PEM.int_CHILD_DETAIL_ID
+where  PEM.int_CHILD_DETAIL_ID=37 and int_CHILD_NO=1 and PED.int_CLAIM_ID = DC.int_CLAIM_ID FOR XML PATH('')),' #!',', '), 1, 2, '') AS DeliveryOutcome1,
+
+STUFF(REPLACE((select '#!' + LTRIM(RTRIM(PED.str_RESULT)) AS 'data()' from tbl_HB_DELIVERY_CHILD_DETAIL AS PED
+inner join tbl_CHILD_DETAIL_MASTER AS PEM on PED.int_CHILD_DETAIL_ID=PEM.int_CHILD_DETAIL_ID
+where  PEM.int_CHILD_DETAIL_ID=4 and PED.int_CHILD_NO=1 and PED.int_CLAIM_ID = DC.int_CLAIM_ID FOR XML PATH('')),' #!',', '), 1, 2, '') AS Sex1,
+STUFF(REPLACE((select '#!' + LTRIM(RTRIM(PED.str_RESULT)) AS 'data()' from tbl_HB_DELIVERY_CHILD_DETAIL AS PED
+inner join tbl_CHILD_DETAIL_MASTER AS PEM on PED.int_CHILD_DETAIL_ID=PEM.int_CHILD_DETAIL_ID
+where  PEM.int_CHILD_DETAIL_ID=37 and int_CHILD_NO=2 and PED.int_CLAIM_ID = DC.int_CLAIM_ID FOR XML PATH('')),' #!',', '), 1, 2, '') AS DeliveryOutcome2,
+STUFF(REPLACE((select '#!' + LTRIM(RTRIM(PED.str_RESULT)) AS 'data()' from tbl_HB_DELIVERY_CHILD_DETAIL AS PED
+inner join tbl_CHILD_DETAIL_MASTER AS PEM on PED.int_CHILD_DETAIL_ID=PEM.int_CHILD_DETAIL_ID
+where  PEM.int_CHILD_DETAIL_ID=4 and PED.int_CHILD_NO=2 and PED.int_CLAIM_ID = DC.int_CLAIM_ID FOR XML PATH('')),' #!',', '), 1, 2, '') AS Sex2,
+STUFF(REPLACE((select '#!' + LTRIM(RTRIM(PED.str_RESULT)) AS 'data()' from tbl_HB_DELIVERY_CHILD_DETAIL AS PED
+inner join tbl_CHILD_DETAIL_MASTER AS PEM on PED.int_CHILD_DETAIL_ID=PEM.int_CHILD_DETAIL_ID
+where  PEM.int_CHILD_DETAIL_ID=4 and PED.int_CHILD_NO=3 and PED.int_CLAIM_ID = DC.int_CLAIM_ID FOR XML PATH('')),' #!',', '), 1, 2, '') AS Sex3,
+
+CBM.str_RESULT AS 'Condition of Baby at 12Hrs', CBM1.str_RESULT AS 'Condition of Baby at 6Hrs', CBM2.str_RESULT AS 'Condition of Mother at 12Hrs', CBM3.str_RESULT AS 'Condition of Mother at 6Hrs',
+
+
+
+STUFF(REPLACE((select '#!' + LTRIM(RTRIM(case when PED.int_COUNSELING_ID in (4,11) then 'Immunisation Complete' when PED.int_COUNSELING_ID=5 then 'Vitamin A' when PED.int_COUNSELING_ID=12 then 'BCG'
+when PED.int_COUNSELING_ID=13 then 'Polio 0'
+when PED.int_COUNSELING_ID=14 then 'DPT HepB Hib'
+when PED.int_COUNSELING_ID=15 then 'PCV'
+when PED.int_COUNSELING_ID=17 then 'Polio 1'
+ else Null end)) AS 'data()' from tbl_HB_DELIVERY_COUNSELING_DETAIL AS PED
+inner join tbl_COUNSELING_MASTER AS PEM on PED.int_COUNSELING_ID=PEM.int_COUNSELING_ID
+where  PEM.int_COUNSELING_ID  in (4,5,11,12,13,14,15,17) and PED.int_CLAIM_ID = DC.int_CLAIM_ID FOR XML PATH('')),' #!',', '), 1, 2, '') AS Immunisation,  
+
+STUFF(REPLACE((select '#!' + LTRIM(RTRIM(PED.str_REMARKS)) AS 'data()' from tbl_HB_DELIVERY_COUNSELING_DETAIL AS PED
+inner join tbl_COUNSELING_MASTER AS PEM on PED.int_COUNSELING_ID=PEM.int_COUNSELING_ID
+where  PEM.int_COUNSELING_ID  in (4,5,11,12,13,14,15,17) and PED.int_CLAIM_ID = DC.int_CLAIM_ID FOR XML PATH('')),' #!',', '), 1, 2, '') AS str_REMARKS,
+
+Case when DC.Asphyxia_Present=1 THen 'Yes' when DC.Asphyxia_Present=0 THen 'No'END AS Is_Asphyxia_Present,
+Case When DC.Resuscitation_done=1 Then 'Yes' When DC.Resuscitation_done=0 Then 'No' End as Resuscitation_done,
+Case when DC.Is_Baby_Breastfeeding=1 Then 'Yes' when DC.Is_Baby_Breastfeeding=0 Then 'No' END AS Is_Baby_Breastfeeding,
+Case when DC.Breast_Attachment_Done=1 Then 'Yes' when DC.Breast_Attachment_Done=0 Then 'No'END AS Breast_Attachment_Done,
+
+
+STUFF(REPLACE((select '#!' + LTRIM(RTRIM(PED.str_RESULT)) AS 'data()' from tbl_HB_DELIVERY_TEST_DETAIL AS PED
+inner join tbl_TEST_MASTER  AS PEM on PED.int_test_id=PEM.int_TEST_ID
+where  PEM.int_TEST_ID=10960099  and PED.int_claim_id = DC.int_CLAIM_ID FOR XML PATH('')),' #!',', '), 1, 2, '') AS HIVTest,
+
+case When isHIVPositive=0  Then 'Negative' When isHIVPositive=1  Then 'Positive' Else NULL End as HIVStatus,
+case When DC.IsResultReceived=0  Then 'No' When IsResultReceived=1  Then 'Yes' Else NULL End as HIVresultReceived,
+case When isEMTCT=0  Then 'Not Inititiated' When isEMTCT=1 Then 'Inititated' ELSE NULL End as ARVStatus,
+case when strEMTCTReason=1 then 'Client in denial/shock/depression following HIV test'
+when  strEMTCTReason=2 then 'Facility doesnt provide ARVs'
+when  strEMTCTReason=3 then 'ARVs out of stock'
+when  strEMTCTReason=4 then 'Already on ART'
+when  strEMTCTReason=5 then 'Mother in denial/shock/depressiion following HIV test'
+when  strEMTCTReason=6 then 'Facility doesnt provide EID services' ELSE NULL End as strEMTCTReason,
+
+case When isSyrupGiven=1  Then 'YES' When isSyrupGiven=0  Then 'NO' Else Null End as NevirapineGiven,
+case when strSyrupReason=2 then 'Facility doesntt provide ARVs'
+when strSyrupReason=5 then 'Mother in denial/shock/depressiion following HIV test'
+when strSyrupReason=7 then 'Nevirapine syrup out of stock' Else Null End as NevirapinReason
+
+from tbl_HB_DELIVERY_CLAIM as DC
+
+left join tbl_CLIENT_MASTER AS C
+on DC.int_CLIENT_ID=C.int_CLIENT_ID
+
+left join [dbo].[tbl_VOUCHER_SERVICE_PROVIDER_MASTER] as VSP
+on DC.int_VSP_ID= VSP.int_VSP_ID
+
+left join tbl_DISTRICT_MASTER AS D
+on VSP.int_DISTRICT_ID=D.int_DISTRICT_ID
+
+
+left join tbl_HB_DELIVERY_PRESENT_DELIVERY_DETAIL as PDD
+on DC.int_CLAIM_ID=PDD.int_CLAIM_ID and PDD.int_PRESENT_DELIVERY_DETAIL_ID=35
+
+left join [dbo].[tbl_HB_DELIVERY_MOTHER_CONDITION_DETAIL] as CBM
+on DC.int_CLAIM_ID=CBM.int_CLAIM_ID and (CBM.str_RESULT like ('%dea%') or  CBM.str_RESULT like ('%die%')) and CBM.int_CONDITION_TYPE=2
+
+left join [dbo].[tbl_HB_DELIVERY_MOTHER_CONDITION_DETAIL] as CBM1
+on DC.int_CLAIM_ID=CBM1.int_CLAIM_ID and (CBM1.str_RESULT like ('%dea%') or  CBM1.str_RESULT like ('%die%')) and CBM1.int_CONDITION_TYPE=4
+
+left join [dbo].[tbl_HB_DELIVERY_MOTHER_CONDITION_DETAIL] as CBM2
+on DC.int_CLAIM_ID=CBM2.int_CLAIM_ID and (CBM2.str_RESULT like ('%dea%') or  CBM2.str_RESULT like ('%die%')) and CBM2.int_CONDITION_TYPE=1
+
+left join [dbo].[tbl_HB_DELIVERY_MOTHER_CONDITION_DETAIL] as CBM3
+on DC.int_CLAIM_ID=CBM3.int_CLAIM_ID and (CBM3.str_RESULT like ('%dea%') or  CBM3.str_RESULT like ('%die%')) and CBM3.int_CONDITION_TYPE=3
+
+left join [dbo].[tbl_HB_DELIVERY_MOTHER_CONDITION_DETAIL] as CBM4
+on DC.int_CLAIM_ID=CBM4.int_CLAIM_ID and (CBM4.str_RESULT like ('%dea%') or  CBM4.str_RESULT like ('%die%')) and CBM4.int_CONDITION_TYPE in (1,2,3,4)
+
+where cast (DC.dt_CREATED_DATE as date) between '2018-10-01' and '2018-10-31'
+order by DC.int_CLAIM_ID
