@@ -1,0 +1,103 @@
+*************************** Count Entries **********************************
+
+select  str_CREATED_BY,count(str_CREATED_BY) from tbl_HB_DELIVERY_CLAIM
+where cast(dt_CREATED_DATE as DATE) between '2019-05-01' and '2019-05-31'
+group by str_CREATED_BY order by count(str_CREATED_BY)
+
+
+
+
+***************** Select Records without feedback************************************
+select CB.str_BARCODE AS Barcode, CM.str_CLIENT_NAME AS ClientName,CB.str_CREATED_BY AS DataEntrant, str_POVERTY_GRADE, PGT.dec_MONEY_SPEND,CB.dt_CREATED_DATE AS CreatedDate, 
+strvoucherno,dt_DATE as PGTDate
+from tbl_CLIENT_BARCODE AS CB
+left join tbl_POVERTY_GRADING_TOOL AS PGT
+on CB.int_CLIENT_ID=PGT.int_CLIENT_ID
+left join tbl_CLIENT_MASTER AS CM
+on CB.int_CLIENT_ID=CM.int_CLIENT_ID
+left join TBL_CLIENT_FEEDBACK as CF
+on CF.strVoucherNo=CB.str_BARCODE
+where CB.str_BARCODE  not in ( select strVoucherNo from TBL_CLIENT_FEEDBACK where cast(dt_CREATED_DATE as DATE) between '2018-05-01' and '2019-05-31') and 
+cast(CB.dt_CREATED_DATE as DATE) between '2019-05-01' and '2019-05-31'
+
+
+
+*********************** Count approved claims***********************************************
+select  int_STATUS,count(int_STATUS) from tbl_HB_DELIVERY_CLAIM
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-25' and int_STATUS in (2,3,4)
+group by int_STATUS order by count(int_STATUS) desc 
+select  int_STATUS,count(int_STATUS) from tbl_HB_ANC_CLAIM_MASTER
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-25' and int_STATUS in (2,3,4)
+group by int_STATUS order by count(int_STATUS) desc
+select  int_STATUS,count(int_STATUS) from tbl_HB_COMPLECATIONS_CLAIM_MASTER
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-31' and int_STATUS in (2,3,4)
+group by int_STATUS order by count(int_STATUS) desc
+select  int_STATUS,count(int_STATUS) from tbl_HB_PNC_CLAIM_MASTER
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-31' and int_STATUS in (2,3,4)
+group by int_STATUS order by count(int_STATUS) desc
+select  int_STATUS,count(int_STATUS) from tbl_HB_TRANSPORT_SERVICE_CLAIM
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-31' and int_STATUS in (2,3,4)
+group by int_STATUS order by count(int_STATUS) desc
+************************************************ Submission and entry totals********************************************************
+
+select * from tblClaimsSummary
+where cast(CreatedDate as DATE) between '2019-05-01' and '2019-05-30'
+
+select * from tbl_HB_ANC_CLAIM_MASTER
+where cast(dt_CREATED_DATE as DATE) between '2019-05-01' and '2019-05-30' order by dt_CREATED_DATE desc
+select * from tbl_HB_DELIVERY_CLAIM
+where cast(dt_CREATED_DATE as DATE) between '2019-05-01' and '2019-05-30' order by dt_CREATED_DATE desc
+select * from tbl_HB_PNC_CLAIM_MASTER
+where cast(dt_CREATED_DATE as DATE) between '2019-05-01' and '2019-05-30' order by dt_CREATED_DATE desc
+select * from tbl_HB_COMPLECATIONS_CLAIM_MASTER
+where cast(dt_CREATED_DATE as DATE) between '2019-05-01' and '2019-05-30' order by dt_CREATED_DATE desc
+select * from tbl_HB_TRANSPORT_SERVICE_CLAIM
+where cast(dt_CREATED_DATE as DATE) between '2019-05-01' and '2019-05-30' order by dt_CREATED_DATE desc
+
+************************************** VETTED************************************************************
+
+select * from tbl_HB_ANC_CLAIM_MASTER
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-30' and int_STATUS in (2,3,4) order by dt_CREATED_DATE desc
+select * from tbl_HB_DELIVERY_CLAIM
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-30' and int_STATUS in (2,3,4) order by dt_CREATED_DATE desc
+select * from tbl_HB_PNC_CLAIM_MASTER
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-30' and int_STATUS in (2,3,4) order by dt_CREATED_DATE desc
+select * from tbl_HB_COMPLECATIONS_CLAIM_MASTER
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-30' and int_STATUS in (2,3,4) order by dt_CREATED_DATE desc
+select * from tbl_HB_TRANSPORT_SERVICE_CLAIM
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-30' and int_STATUS in (2,3,4) order by dt_CREATED_DATE desc
+
+
+************ 2 Reviewed and paid, 1 -Reviewed and 0- pending **********************
+
+select  int_CLOSE_STATUS,count(int_CLOSE_STATUS) from tbl_HB_ANC_CLAIM_MASTER
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-31' and int_STATUS in (2,3,4)
+group by int_CLOSE_STATUS order by count(int_CLOSE_STATUS) desc
+select  int_CLOSE_STATUS,count(int_CLOSE_STATUS) from tbl_HB_DELIVERY_CLAIM
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-31' and int_STATUS in (2,3,4)
+group by int_CLOSE_STATUS order by count(int_CLOSE_STATUS) desc
+select  int_CLOSE_STATUS,count(int_CLOSE_STATUS) from tbl_HB_PNC_CLAIM_MASTER
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-31' and int_STATUS in (2,3,4)
+group by int_CLOSE_STATUS order by count(int_CLOSE_STATUS) desc
+select  int_CLOSE_STATUS,count(int_CLOSE_STATUS) from tbl_HB_COMPLECATIONS_CLAIM_MASTER
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-31' and int_STATUS in (2,3,4)
+group by int_CLOSE_STATUS order by count(int_CLOSE_STATUS) desc
+select  int_CLOSE_STATUS,count(int_CLOSE_STATUS) from tbl_HB_TRANSPORT_SERVICE_CLAIM
+where cast(dt_UPDATED_DATE as DATE) between '2019-05-01' and '2019-05-31' and int_STATUS in (2,3,4)
+group by int_CLOSE_STATUS order by count(int_CLOSE_STATUS) desc
+
+**************************************** Updating SEX ***************************************
+update tbl_HB_DELIVERY_CHILD_DETAIL
+set str_RESULT='F'
+where int_CHILD_DETAIL_ID=4 and str_RESULT not like '%M' and int_CLAIM_ID in 
+
+************************************* Updating fundalheight and gestation *************************
+update tbl_HB_ANC_PREGNANCY_RELATED_DETAIL
+set str_RESULT=SUBSTRING(LTRIM(str_result),1,2)
+
+where int_PREGNANCY_RELATED_ID=3 and int_CLAIM_ID in 
+
+
+
+
+

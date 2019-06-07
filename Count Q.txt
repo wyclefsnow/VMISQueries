@@ -1,0 +1,3 @@
+select  str_CREATED_BY,count(str_CREATED_BY) from tbl_HB_DELIVERY_CLAIM
+ where cast(dt_CREATED_DATE as DATE) between '2019-05-01' and '2019-05-31'
+group by str_CREATED_BY

@@ -1,0 +1,96 @@
+select A.int_CLAIM_ID, A.int_CLAIM_ID, str_CLAIM_NO AS CLAIM_NO,A.str_BARCODE AS BARCODE, Case  When A.str_BARCODE like '%A01'  Then 'ANC1' when A.str_BARCODE like '%A02' Then 'ANC2' When A.str_BARCODE like '%A03'  Then 'ANC3' When A.str_BARCODE like '%A04'  
+Then 'ANC4' Else 'NULL' End AS Visit,
+case when str_FIRST_CLOSE_BY='elnambi' THEN 'Evelyn Linda' when str_FIRST_CLOSE_BY='snamasambi' THEN 'Sharon Namasambi' when str_FIRST_CLOSE_BY='gkaregyeya' THEN 'Gerald Karegyeya' when str_FIRST_CLOSE_BY='modot' THEN 'Moses Odot' 
+when str_FIRST_CLOSE_BY='hsettimba' THEN 'Herbert Settimba' when str_FIRST_CLOSE_BY='jmusiimenta' THEN 'Joan Musiimenta'when str_FIRST_CLOSE_BY='askatamba' THEN 'Allan Katamba' when str_FIRST_CLOSE_BY='gkahwa' THEN 'Gerald Kahwa' when str_FIRST_CLOSE_BY='Anita' THEN 'Anita Namata' when str_FIRST_CLOSE_BY='Derrick' THEN 'Derrick'
+ELSE str_FIRST_CLOSE_BY END AS APPROVED_BY, 
+dt_FIRST_CLOSE_DATE AS Approval_DATE,
+
+case when str_SECOND_CLOSE_BY='hsettimba' THEN 'Herbert Settimba' when str_SECOND_CLOSE_BY='jmusiimenta' THEN 'Joan Musiimenta' when str_SECOND_CLOSE_BY='snamasambi' THEN 'Sharon Namasambi' when str_SECOND_CLOSE_BY='elnambi' THEN 'Evelyn Linda'
+when str_SECOND_CLOSE_BY='askatamba' THEN 'Allan Katamba' when str_SECOND_CLOSE_BY='gkahwa' THEN 'Gerald Kahwa' when str_SECOND_CLOSE_BY='Anita' THEN 'Anita Namata' when str_SECOND_CLOSE_BY='Derrick' THEN 'Derrick'
+ELSE str_SECOND_CLOSE_BY END AS PAID_BY, 
+dt_SECOND_CLOSE_DATE AS SYSTEM_PAYMENT_DATE,dt_PAYMENT_DATE AS FINANCE_PAYMENT_DATE, dec_AMOUNT_PAID as AMOUNT
+from tbl_HB_ANC_CLAIM_MASTER AS A
+
+left join tbl_CLAIM_CLOSE_DETAIL AS CCD
+on A.int_CLAIM_ID=CCD.int_CLAIM_ID
+
+where A.dt_processed_date between '2019-01-01' and '2019-04-30' 
+
+
+UNION
+
+select DC.int_CLAIM_ID, DC.int_CLAIM_ID, str_CLAIM_NO AS CLAIM_NO,DC.str_BARCODE AS BARCODE, Case When DC.str_BARCODE like '%D01'Then 'Delivery' Else 'NULL' End AS Visit,
+case when str_FIRST_CLOSE_BY='elnambi' THEN 'Evelyn Linda' when str_FIRST_CLOSE_BY='snamasambi' THEN 'Sharon Namasambi' when str_FIRST_CLOSE_BY='gkaregyeya' THEN 'Gerald Karegyeya' when str_FIRST_CLOSE_BY='modot' THEN 'Moses Odot' 
+when str_FIRST_CLOSE_BY='hsettimba' THEN 'Herbert Settimba' when str_FIRST_CLOSE_BY='jmusiimenta' THEN 'Joan Musiimenta'when str_FIRST_CLOSE_BY='askatamba' THEN 'Allan Katamba' when str_FIRST_CLOSE_BY='gkahwa' THEN 'Gerald Kahwa' when str_FIRST_CLOSE_BY='Anita' THEN 'Anita Namata' when str_FIRST_CLOSE_BY='Derrick' THEN 'Derrick'
+ELSE str_FIRST_CLOSE_BY END AS APPROVED_BY, 
+dt_FIRST_CLOSE_DATE AS Approval_DATE,
+
+case when str_SECOND_CLOSE_BY='hsettimba' THEN 'Herbert Settimba' when str_SECOND_CLOSE_BY='jmusiimenta' THEN 'Joan Musiimenta' when str_SECOND_CLOSE_BY='snamasambi' THEN 'Sharon Namasambi' when str_SECOND_CLOSE_BY='elnambi' THEN 'Evelyn Linda'
+when str_SECOND_CLOSE_BY='askatamba' THEN 'Allan Katamba' when str_SECOND_CLOSE_BY='gkahwa' THEN 'Gerald Kahwa' when str_SECOND_CLOSE_BY='Anita' THEN 'Anita Namata' when str_SECOND_CLOSE_BY='Derrick' THEN 'Derrick'
+ELSE str_SECOND_CLOSE_BY END AS PAID_BY, 
+dt_SECOND_CLOSE_DATE AS SYSTEM_PAYMENT_DATE,dt_PAYMENT_DATE AS FINANCE_PAYMENT_DATE, dec_AMOUNT_PAID as AMOUNT
+from tbl_HB_DELIVERY_CLAIM AS DC
+
+left join tbl_CLAIM_CLOSE_DETAIL AS CCD
+on DC.int_CLAIM_ID=CCD.int_CLAIM_ID
+
+where CCD.dt_FIRST_CLOSE_DATE between '2019-01-01' and '2019-04-30' 
+
+UNION
+
+select PNC.int_CLAIM_ID, PNC.int_CLAIM_ID, str_CLAIM_NO AS CLAIM_NO,PNC.str_BARCODE AS BARCODE, Case When PNC.str_BARCODE like '%P01'  Then 'PNC1' when PNC.str_BARCODE like '%P02' Then 'FP' When PNC.str_BARCODE like '%P03'  Then 'PNC3' 
+When PNC.str_BARCODE like '%P04'  Then 'PNC4' Else 'Sickchild/PNC2' End AS Visit,
+case when str_FIRST_CLOSE_BY='elnambi' THEN 'Evelyn Linda' when str_FIRST_CLOSE_BY='snamasambi' THEN 'Sharon Namasambi' when str_FIRST_CLOSE_BY='gkaregyeya' THEN 'Gerald Karegyeya' when str_FIRST_CLOSE_BY='modot' THEN 'Moses Odot' 
+when str_FIRST_CLOSE_BY='hsettimba' THEN 'Herbert Settimba' when str_FIRST_CLOSE_BY='jmusiimenta' THEN 'Joan Musiimenta'when str_FIRST_CLOSE_BY='askatamba' THEN 'Allan Katamba' when str_FIRST_CLOSE_BY='gkahwa' THEN 'Gerald Kahwa' when str_FIRST_CLOSE_BY='Anita' THEN 'Anita Namata' when str_FIRST_CLOSE_BY='Derrick' THEN 'Derrick'
+ELSE str_FIRST_CLOSE_BY END AS APPROVED_BY, 
+dt_FIRST_CLOSE_DATE AS Approval_DATE,
+
+case when str_SECOND_CLOSE_BY='hsettimba' THEN 'Herbert Settimba' when str_SECOND_CLOSE_BY='jmusiimenta' THEN 'Joan Musiimenta' when str_SECOND_CLOSE_BY='snamasambi' THEN 'Sharon Namasambi' when str_SECOND_CLOSE_BY='elnambi' THEN 'Evelyn Linda'
+when str_SECOND_CLOSE_BY='askatamba' THEN 'Allan Katamba' when str_SECOND_CLOSE_BY='gkahwa' THEN 'Gerald Kahwa' when str_SECOND_CLOSE_BY='Anita' THEN 'Anita Namata' when str_SECOND_CLOSE_BY='Derrick' THEN 'Derrick'
+ELSE str_SECOND_CLOSE_BY END AS PAID_BY, 
+dt_SECOND_CLOSE_DATE AS SYSTEM_PAYMENT_DATE,dt_PAYMENT_DATE AS FINANCE_PAYMENT_DATE, dec_AMOUNT_PAID as AMOUNT
+from tbl_HB_PNC_CLAIM_MASTER AS PNC
+
+left join tbl_CLAIM_CLOSE_DETAIL AS CCD
+on PNC.int_CLAIM_ID=CCD.int_CLAIM_ID
+
+where CCD.dt_FIRST_CLOSE_DATE between '2019-01-01' and '2019-04-30' 
+
+UNION
+
+select CC.int_CLAIM_ID, CC.int_CLAIM_ID, str_CLAIM_NO AS CLAIM_NO,CC.str_BARCODE AS BARCODE, Case When CC.str_BARCODE like '__________'Then 'Complication' Else 'NULL' End AS Visit,
+case when str_FIRST_CLOSE_BY='elnambi' THEN 'Evelyn Linda' when str_FIRST_CLOSE_BY='snamasambi' THEN 'Sharon Namasambi' when str_FIRST_CLOSE_BY='gkaregyeya' THEN 'Gerald Karegyeya' when str_FIRST_CLOSE_BY='modot' THEN 'Moses Odot' 
+when str_FIRST_CLOSE_BY='hsettimba' THEN 'Herbert Settimba' when str_FIRST_CLOSE_BY='jmusiimenta' THEN 'Joan Musiimenta'when str_FIRST_CLOSE_BY='askatamba' THEN 'Allan Katamba' when str_FIRST_CLOSE_BY='gkahwa' THEN 'Gerald Kahwa' when str_FIRST_CLOSE_BY='Anita' THEN 'Anita Namata' when str_FIRST_CLOSE_BY='Derrick' THEN 'Derrick'
+ELSE str_FIRST_CLOSE_BY END AS APPROVED_BY, 
+dt_FIRST_CLOSE_DATE AS Approval_DATE,
+
+case when str_SECOND_CLOSE_BY='hsettimba' THEN 'Herbert Settimba' when str_SECOND_CLOSE_BY='jmusiimenta' THEN 'Joan Musiimenta' when str_SECOND_CLOSE_BY='snamasambi' THEN 'Sharon Namasambi' when str_SECOND_CLOSE_BY='elnambi' THEN 'Evelyn Linda'
+when str_SECOND_CLOSE_BY='askatamba' THEN 'Allan Katamba' when str_SECOND_CLOSE_BY='gkahwa' THEN 'Gerald Kahwa' when str_SECOND_CLOSE_BY='Anita' THEN 'Anita Namata' when str_SECOND_CLOSE_BY='Derrick' THEN 'Derrick'
+ELSE str_SECOND_CLOSE_BY END AS PAID_BY, 
+dt_SECOND_CLOSE_DATE AS SYSTEM_PAYMENT_DATE,dt_PAYMENT_DATE AS FINANCE_PAYMENT_DATE, dec_AMOUNT_PAID as AMOUNT
+from tbl_HB_COMPLECATIONS_CLAIM_MASTER AS CC
+
+left join tbl_CLAIM_CLOSE_DETAIL AS CCD
+on CC.int_CLAIM_ID=CCD.int_CLAIM_ID
+
+where CCD.dt_FIRST_CLOSE_DATE between '2019-01-01' and '2019-04-30' 
+
+
+UNION
+
+select TC.int_CLAIM_ID, TC.int_CLAIM_ID, str_CLAIM_NO AS CLAIM_NO,TC.str_BARCODE AS BARCODE, Case When TC.str_BARCODE like '__________'Then 'Transport' Else 'NULL' End AS Visit,
+case when str_FIRST_CLOSE_BY='elnambi' THEN 'Evelyn Linda' when str_FIRST_CLOSE_BY='snamasambi' THEN 'Sharon Namasambi' when str_FIRST_CLOSE_BY='gkaregyeya' THEN 'Gerald Karegyeya' when str_FIRST_CLOSE_BY='modot' THEN 'Moses Odot' 
+when str_FIRST_CLOSE_BY='hsettimba' THEN 'Herbert Settimba' when str_FIRST_CLOSE_BY='jmusiimenta' THEN 'Joan Musiimenta'when str_FIRST_CLOSE_BY='askatamba' THEN 'Allan Katamba' when str_FIRST_CLOSE_BY='gkahwa' THEN 'Gerald Kahwa' when str_FIRST_CLOSE_BY='Anita' THEN 'Anita Namata' when str_FIRST_CLOSE_BY='Derrick' THEN 'Derrick'
+ELSE str_FIRST_CLOSE_BY END AS APPROVED_BY, 
+dt_FIRST_CLOSE_DATE AS Approval_DATE,
+
+case when str_SECOND_CLOSE_BY='hsettimba' THEN 'Herbert Settimba' when str_SECOND_CLOSE_BY='jmusiimenta' THEN 'Joan Musiimenta' when str_SECOND_CLOSE_BY='snamasambi' THEN 'Sharon Namasambi' when str_SECOND_CLOSE_BY='elnambi' THEN 'Evelyn Linda'
+when str_SECOND_CLOSE_BY='askatamba' THEN 'Allan Katamba' when str_SECOND_CLOSE_BY='gkahwa' THEN 'Gerald Kahwa' when str_SECOND_CLOSE_BY='Anita' THEN 'Anita Namata' when str_SECOND_CLOSE_BY='Derrick' THEN 'Derrick'
+ELSE str_SECOND_CLOSE_BY END AS PAID_BY, 
+dt_SECOND_CLOSE_DATE AS SYSTEM_PAYMENT_DATE,dt_PAYMENT_DATE AS FINANCE_PAYMENT_DATE, dec_AMOUNT_PAID as AMOUNT
+from tbl_HB_TRANSPORT_SERVICE_CLAIM AS TC
+
+left join tbl_CLAIM_CLOSE_DETAIL AS CCD
+on TC.int_CLAIM_ID=CCD.int_CLAIM_ID
+
+where CCD.dt_FIRST_CLOSE_DATE between '2019-01-01' and '2019-04-30' 
